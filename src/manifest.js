@@ -15,7 +15,7 @@ module.exports = ({ name, endpoint }, res) => {
           "sizes": "512x512"
         }
       ],
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone",
     "theme_color": "#ffffff",
     "background_color": "#f3f3f3"
