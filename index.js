@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-const endpoints = require('./src/util/data');
+const endpoints = require('./src/data');
 const routes = require('./src/routes');
 
 app.set('views', './src/views');
@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/style.css', (req, res) => {
-  res.sendFile('./src/views/style.css', { root: __dirname });
+  res.sendFile('./src/assets/style.css', { root: __dirname });
 });
 
 app.use('/:id', (req, res, next) => {

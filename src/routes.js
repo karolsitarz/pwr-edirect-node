@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 const sharp = require('sharp');
 
-const endpoints = require('./util/data');
-const getManifest = require('./util/manifest');
+const endpoints = require('./data');
+const getManifest = require('./assets/manifest');
 
 router.get(['/', '/index.html'], (req, res) => {
   const { endpoint } = req;
@@ -23,7 +23,7 @@ router.get('/manifest.json', (req, res) => {
 
 const serveIcon = (size, req, res) => {
   const { endpoint } = req;
-  sharp(`./src/icons/${endpoint}.png`)
+  sharp(`./src/assets/icons/${endpoint}.png`)
     .resize(size)
     .toBuffer()
     .then(img => {
@@ -45,7 +45,7 @@ router.get('/service-worker.js', (req, res) => {
     'no-store, no-cache, must-revalidate, proxy-revalidate'
   );
   res.set('Service-Worker-Allowed', `/${endpoint}`);
-  res.sendFile('/util/service-worker.js', { root: __dirname });
+  res.sendFile('/assets/service-worker.js', { root: __dirname });
 });
 
 module.exports = router;
