@@ -3,18 +3,20 @@ const app = express();
 
 const endpoints = require('./src/util/data');
 const routes = require('./src/routes');
-const main = require('./src/ejs/mainpage');
+
+app.set('views', './src/views');
+app.set('view engine', 'ejs');
+
+app.get('/', (req, res) => {
+  res.render('index', { data: endpoints });
+});
 
 app.use('/:id', (req, res, next) => {
-  if (!endpoints.hasOwnProperty(req.params.id)) res.status(404).send('lmao no');
+  const endpoint = req.params.id;
+  if (!endpoints.hasOwnProperty(endpoint)) {
+    res.status(404).send('lmao no');
+  }
   routes(req, res, next);
-});
-app.get('/', (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/html',
-    'Content-Length': main.length
-  });
-  res.end(main);
 });
 
 const port = process.env.PORT || 3000;

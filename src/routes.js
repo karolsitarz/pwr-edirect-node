@@ -1,61 +1,54 @@
 const express = require('express');
 const router = express.Router();
-const sharp = require('sharp');
+// const sharp = require('sharp');
 
-const html = require('./ejs/html');
-const offline = require('./ejs/offline');
-const manifest = require('./util/manifest');
-const sw = require('./util/service-worker');
+// const html = require('./views/redirect');
+// const offline = require('./views/offline');
+// const manifest = require('./util/manifest');
+// const sw = require('./util/service-worker');
+const endpoints = require('./util/data');
 
-const getEndpoint = req => require('./util/data')[req.baseUrl.slice(1)];
+const getEndpoint = req => req.baseUrl.slice(1);
 
 router.get('/', (req, res) => {
-  if (req.query.reset != null) res.clearCookie(`x-${getEndpoint(req)}-always`);
-  else if (req.cookies[`x-${getEndpoint(req)}-always`])
-    return res.redirect(getEndpoint(req).url);
-  if (req.query.redirect != null) return res.redirect(getEndpoint(req).url);
-  if (req.query.always != null) {
-    res.cookie(`x-${getEndpoint(req)}-always`, true);
-    return res.redirect(getEndpoint(req).url);
-  }
-
-  html(getEndpoint(req), res);
+  const endpoint = getEndpoint(req);
+  res.render('redirect', { endpoint, ...endpoints[endpoint] });
 });
 
-router.get('/manifest.json', (req, res) => manifest(getEndpoint(req), res));
-router.get('/icon-512.png', (req, res) => {
-  const img = new Buffer(getEndpoint(req).img.split(',')[1], 'base64');
-  res.writeHead(200, {
-    'Content-Type': 'image/png',
-    'Content-Length': img.length
-  });
-  res.end(img);
-});
-router.get('/icon-192.png', (req, res) => {
-  const img = new Buffer(getEndpoint(req).img.split(',')[1], 'base64');
-  sharp(img)
-    .resize(192)
-    .toBuffer()
-    .then(img => {
-      res.writeHead(200, {
-        'Content-Type': 'image/png',
-        'Content-Length': img.length
-      });
-      res.end(img);
-    });
-});
-router.get('/service-worker.js', (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'application/javascript; charset=utf-8'
-  });
-  res.end(sw);
-});
-router.get('/offline.html', (req, res) => {
-  res.writeHead(200, {
-    'Content-Type': 'text/html',
-    'Content-Length': offline.length
-  });
-  res.end(offline);
-});
+// router.get('/manifest.json', (req, res) => manifest(getEndpoint(req), res));
+// router.get('/icon-512.png', (req, res) => {
+//   const img = new Buffer(getEndpoint(req).img.split(',')[1], 'base64');
+//   res.writeHead(200, {
+//     'Content-Type': 'image/png',
+//     'Content-Length': img.length
+//   });
+//   res.end(img);
+// });
+// router.get('/icon-192.png', (req, res) => {
+//   const img = new Buffer(getEndpoint(req).img.split(',')[1], 'base64');
+//   sharp(img)
+//     .resize(192)
+//     .toBuffer()
+//     .then(img => {
+//       res.writeHead(200, {
+//         'Content-Type': 'image/png',
+//         'Content-Length': img.length
+//       });
+//       res.end(img);
+//     });
+// });
+// router.get('/service-worker.js', (req, res) => {
+//   res.writeHead(200, {
+//     'Content-Type': 'application/javascript; charset=utf-8'
+//   });
+//   res.end(sw);
+// });
+// router.get('/offline.html', (req, res) => {
+//   res.writeHead(200, {
+//     'Content-Type': 'text/html',
+//     'Content-Length': offline.length
+//   });
+//   res.end(offline);
+// });
 
 module.exports = router;
