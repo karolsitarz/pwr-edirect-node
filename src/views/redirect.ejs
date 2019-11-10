@@ -18,6 +18,13 @@
   </style>
 </head>
 <body>
+  <script>
+    if ((new URL(window.location.href)).searchParams.get('reset') !== null)
+      localStorage.removeItem('always');
+
+    if (localStorage.always != null)
+      window.location = "<%= url %>";
+  </script>
   <main>
     <h1><%= name %></h1>
     <input id="redirect" type="button" value="przejdź">
@@ -29,12 +36,14 @@
   </main>
   <noscript>You have to enable JavaScript to use this tool.</noscript>
   <script>
-    document.getElementById("redirect").onclick = () => {
-      if (document.getElementById("always") && document.getElementById("always").checked)
-        window.location = window.location.origin + window.location.pathname + '?always'
-      else window.location = window.location.origin + window.location.pathname + '?redirect'
+    document.getElementById('redirect').onclick = () => {
+      if (document.getElementById('always').checked)
+        localStorage.always = "";
+      window.location = "<%= url %>";
     }
-    navigator.serviceWorker.register("/<%= endpoint %>/service-worker.js");
+
+    if ('serviceWorker' in navigator)
+      navigator.serviceWorker.register(`/<%= endpoint %>/service-worker.js`);
   </script>
 </body>
 

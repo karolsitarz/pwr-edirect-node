@@ -1,5 +1,4 @@
-module.exports = ({ name, endpoint }, res) => {
-  const json = `
+module.exports = ({ name, endpoint }) => `
   {
     "short_name": "${name}",
     "name": "${name}",
@@ -7,12 +6,14 @@ module.exports = ({ name, endpoint }, res) => {
         {
           "src": "/${endpoint}/icon-192.png",
           "type": "image/png",
-          "sizes": "192x192"
+          "sizes": "192x192",
+          "purpose": "maskable"
         },
         {
           "src": "/${endpoint}/icon-512.png",
           "type": "image/png",
-          "sizes": "512x512"
+          "sizes": "512x512",
+          "purpose": "maskable"
         }
       ],
     "start_url": "./",
@@ -21,9 +22,3 @@ module.exports = ({ name, endpoint }, res) => {
     "background_color": "#f3f3f3"
   }
   `;
-  res.writeHead(200, {
-    'Content-Type': 'application/json',
-    'Content-Length': json.length
-  });
-  res.end(json);
-};
