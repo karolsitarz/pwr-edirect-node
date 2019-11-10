@@ -22,9 +22,10 @@ router.get('/manifest.json', (req, res) => {
   res.end(manifest);
 });
 
-router.get('/icon-512.png', (req, res) => {
+const serveIcon = (size, req, res) => {
   const endpoint = getEndpoint(req);
   sharp(`./src/icons/${endpoint}.png`)
+    .resize(size)
     .toBuffer()
     .then(img => {
       res.writeHead(200, {
@@ -33,20 +34,10 @@ router.get('/icon-512.png', (req, res) => {
       });
       res.end(img);
     });
-});
-router.get('/icon-192.png', (req, res) => {
-  const endpoint = getEndpoint(req);
-  sharp(`./src/icons/${endpoint}.png`)
-    .resize(192)
-    .toBuffer()
-    .then(img => {
-      res.writeHead(200, {
-        'Content-Type': 'image/png',
-        'Content-Length': img.length
-      });
-      res.end(img);
-    });
-});
+};
+
+router.get('/icon-512.png', (req, res) => serveIcon(512, req, res));
+router.get('/icon-192.png', (req, res) => serveIcon(192, req, res));
 
 router.get('/service-worker.js', (req, res) => {
   const endpoint = getEndpoint(req);
@@ -55,7 +46,6 @@ router.get('/service-worker.js', (req, res) => {
     'no-store, no-cache, must-revalidate, proxy-revalidate'
   );
   res.set('Service-Worker-Allowed', `/${endpoint}`);
-  res.set('Content-Type', 'application/javascript');
   res.sendFile('/util/service-worker.js', { root: __dirname });
 });
 
