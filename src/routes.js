@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const sharp = require('sharp');
 
-const html = require('./html');
-const offline = require('./offline');
-const manifest = require('./manifest');
-const sw = require('./service-worker');
+const html = require('./ejs/html');
+const offline = require('./ejs/offline');
+const manifest = require('./util/manifest');
+const sw = require('./util/service-worker');
 
-const getEndpoint = req => require('./data')[req.baseUrl.slice(1)];
+const getEndpoint = req => require('./util/data')[req.baseUrl.slice(1)];
 
 router.get('/', (req, res) => {
   if (req.query.reset != null) res.clearCookie(`x-${getEndpoint(req)}-always`);

@@ -1,11 +1,10 @@
 const express = require('express');
 const app = express();
 
-const endpoints = require('./src/data');
+const endpoints = require('./src/util/data');
 const routes = require('./src/routes');
-const main = require('./src/mainpage');
+const main = require('./src/ejs/mainpage');
 
-app.use(require('cookie-parser')());
 app.use('/:id', (req, res, next) => {
   if (!endpoints.hasOwnProperty(req.params.id)) res.status(404).send('lmao no');
   routes(req, res, next);

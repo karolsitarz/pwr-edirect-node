@@ -1,4 +1,4 @@
-const links = require('./data');
+const links = require('../util/data');
 module.exports = `
 <!DOCTYPE html>
 <html lang="pl">
