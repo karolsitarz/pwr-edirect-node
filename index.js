@@ -21,6 +21,7 @@ app.use('/:id', (req, res, next) => {
     res.redirect('/');
     return;
   }
+  req.endpoint = req.baseUrl.slice(1);
   routes(req, res, next);
 });
 

@@ -3,17 +3,16 @@ const router = express.Router();
 const sharp = require('sharp');
 
 const endpoints = require('./util/data');
-const getEndpoint = req => req.baseUrl.slice(1);
 const getManifest = require('./util/manifest');
 
 router.get(['/', '/index.html'], (req, res) => {
-  const endpoint = getEndpoint(req);
+  const { endpoint } = req;
   res.set('Service-Worker-Allowed', `/${endpoint}`);
   res.render('redirect', { endpoint, ...endpoints[endpoint] });
 });
 
 router.get('/manifest.json', (req, res) => {
-  const endpoint = getEndpoint(req);
+  const { endpoint } = req;
   const manifest = getManifest({ endpoint, ...endpoints[endpoint] });
   res.writeHead(200, {
     'Content-Type': 'application/json',
@@ -23,7 +22,7 @@ router.get('/manifest.json', (req, res) => {
 });
 
 const serveIcon = (size, req, res) => {
-  const endpoint = getEndpoint(req);
+  const { endpoint } = req;
   sharp(`./src/icons/${endpoint}.png`)
     .resize(size)
     .toBuffer()
@@ -40,7 +39,7 @@ router.get('/icon-512.png', (req, res) => serveIcon(512, req, res));
 router.get('/icon-192.png', (req, res) => serveIcon(192, req, res));
 
 router.get('/service-worker.js', (req, res) => {
-  const endpoint = getEndpoint(req);
+  const { endpoint } = req;
   res.set(
     'Cache-Control',
     'no-store, no-cache, must-revalidate, proxy-revalidate'
