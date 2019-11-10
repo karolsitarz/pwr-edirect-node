@@ -1,28 +1,37 @@
-module.exports = `self.addEventListener('install', function(event) {
-  var offlineRequest = new Request('offline.html');
-  event.waitUntil(
-    fetch(offlineRequest).then(function(response) {
-      return caches.open('offline').then(function(cache) {
-        console.log('[oninstall] Cached offline page', response.url);
-        return cache.put(offlineRequest, response);
-      });
+var CACHE = 'network-or-cache';
+
+self.addEventListener('install', function(evt) {
+  evt.waitUntil(precache());
+});
+self.addEventListener('fetch', function(evt) {
+  console.log('The service worker is serving the asset.');
+
+  evt.respondWith(
+    fromNetwork(evt.request, 400).catch(function() {
+      return fromCache(evt.request);
     })
   );
 });
+function precache() {
+  return caches.open(CACHE).then(function(cache) {
+    return cache.addAll(['./', '../style.css']);
+  });
+}
 
-self.addEventListener('fetch', function(event) {
-  var request = event.request;
+function fromNetwork(request, timeout) {
+  return new Promise(function(fulfill, reject) {
+    var timeoutId = setTimeout(reject, timeout);
 
-  if (request.method === 'GET') {
-    event.respondWith(
-      fetch(request).catch(function(error) {
-        console.error(
-          '[onfetch] Failed. Serving cached offline fallback ' + error
-        );
-        return caches.open('offline').then(function(cache) {
-          return cache.match('offline.html');
-        });
-      })
-    );
-  }
-});`;
+    fetch(request).then(function(response) {
+      clearTimeout(timeoutId);
+      fulfill(response);
+    }, reject);
+  });
+}
+function fromCache(request) {
+  return caches.open(CACHE).then(function(cache) {
+    return cache.match(request).then(function(matching) {
+      return matching || Promise.reject('no-match');
+    });
+  });
+}

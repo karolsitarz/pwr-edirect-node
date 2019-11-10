@@ -11,10 +11,15 @@ app.get('/', (req, res) => {
   res.render('index', { data: endpoints });
 });
 
+app.get('/style.css', (req, res) => {
+  res.sendFile('./src/views/style.css', { root: __dirname });
+});
+
 app.use('/:id', (req, res, next) => {
   const endpoint = req.params.id;
   if (!endpoints.hasOwnProperty(endpoint)) {
-    res.status(404).send('lmao no');
+    res.redirect('/');
+    return;
   }
   routes(req, res, next);
 });
