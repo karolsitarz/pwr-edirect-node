@@ -7,13 +7,13 @@ module.exports = ({ name, endpoint }) => `
           "src": "/${endpoint}/icon-192.png",
           "type": "image/png",
           "sizes": "192x192",
-          "purpose": "any maskable"
+          "purpose": "maskable"
         },
         {
           "src": "/${endpoint}/icon-512.png",
           "type": "image/png",
           "sizes": "512x512",
-          "purpose": "any maskable"
+          "purpose": "maskable"
         }
       ],
     "start_url": "./",
