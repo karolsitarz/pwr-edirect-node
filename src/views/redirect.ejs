@@ -34,7 +34,7 @@
   </main>
   <noscript>You have to enable JavaScript to use this tool.</noscript>
   <script>
-    document.getElementById('redirect').onclick = () => {
+    document.getElementById('redirect').onclick = function() {
       if (document.getElementById('always').checked)
         localStorage.always = "";
       window.location = "<%= url %>";
